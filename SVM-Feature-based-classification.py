@@ -18,6 +18,7 @@ from sklearn.metrics import make_scorer
 from sklearn.svm import SVC
 import joblib
 
+
 class Feature_based_classification:
     def __init__(self, filename):
         self.filename = filename
@@ -28,7 +29,6 @@ class Feature_based_classification:
         self.clf = SVC(kernel='rbf', C=1, gamma=0.1)
         self.balance_train_data()
 
-    
     def balance_data(self, X, y):
         # Get class label count
         class_count = y.value_counts()
@@ -84,7 +84,7 @@ class Feature_based_classification:
         plt.ylabel('Recall')
         plt.title('Precision-Recall Curve')
         plt.show()
-    
+
     def plot_precision_recall_fscore_support(self, y_test, y_pred):
         precision, recall, fscore, support = precision_recall_fscore_support(y_test, y_pred)
         plt.plot(precision, recall)
@@ -92,13 +92,16 @@ class Feature_based_classification:
         plt.ylabel('Recall')
         plt.title('Precision-Recall Curve')
         plt.show()
+
+    def feature_normalization(self, X):
+        return (X - X.mean()) / X.std() # Standardization
     
     def balance_train_data(self):
         self.X_train_balanced, self.y_train_balanced = self.balance_data(self.X_train, self.y_train)
-     
+
     def train(self):
         self.clf.fit(self.X_train_balanced, self.y_train_balanced)
-    
+
     def test(self):
         y_pred = self.clf.predict(self.X_test)
         print('Accuracy:', accuracy_score(self.y_test, y_pred))
@@ -115,16 +118,16 @@ class Feature_based_classification:
         print('Recall Score:', recall_score(self.y_test, y_pred))
         print('Precision-Recall F1-Score:', precision_recall_fscore_support(self.y_test, y_pred))
         print('Average Precision Score:', average_precision_score(self.y_test, y_pred))
-    
+
     def save_model(self, filename):
         joblib.dump(self.clf, filename)
-    
+
     def load_model(self, filename):
         self.clf = joblib.load(filename)
-    
+
     def predict(self, X):
         return self.clf.predict(X)
-    
+
 
 if __name__ == "__main__":
     filename = '../data/feature_based_classification.xlsx'
@@ -135,8 +138,3 @@ if __name__ == "__main__":
     model.load_model('../model/feature_based_classification.pkl')
     X = model.X_test.iloc[0:1, :]
     print(model.predict(X))
-
-    
-
-
-
