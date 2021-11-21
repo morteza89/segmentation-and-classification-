@@ -1,3 +1,8 @@
+# ------------------------------------------------------------------------------
+# Author:      Morteza Heidari
+#
+# Updated:     11/20/2021
+# ------------------------------------------------------------------------------
 # Read an excel file of features and labels and train an svm classifier
 import pandas as pd
 import numpy as np
