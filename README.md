@@ -8,3 +8,6 @@ An algorithm which reads the images and pre process them as input data to the sv
 
 ## SVM-feature-based-classification:
 Input data is an excel file of features, which the last column is related labels, the data is read, balances and split to train and test performance of SVM classifier on the extracted feature vector.
+## data-normalization:
+Different algorithms are used to read excel files, balance the data, and normalize features,
+it is either possible to save the output in an excel file to use as a training file or apply it to a classifier directly..
