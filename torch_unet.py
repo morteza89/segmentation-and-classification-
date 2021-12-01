@@ -1,3 +1,11 @@
+# ------------------------------------------------------------------------------
+# Name:        Image Segmentation with U-Net bached on pytorch
+# Purpose:	   Strait forward way to set directories to a unet train and evaluate it all with setting appropriate parametters..
+#
+# Author:      Morteza Heidari
+#
+# Created:     12/01/2021
+# ------------------------------------------------------------------------------
 # used padded convolutions to build a unet for image segmentation
 import torch
 import torch.nn as nn
