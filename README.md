@@ -3,6 +3,9 @@
 ## Unet-segmentation:
 A python code based on Keras and TensorFlow, suitable for segmentation.  Input size of image, number of channels, number of classes all are possible to handle. Shearing, zooming, and horizontal flip as the most famous methods are considered for data augmentation.
 
+## Torch Unet
+A segmentation funtion like Unet-segmantation while it is based on pytorch programming!
+
 ## SVM-classification:
 An algorithm which reads the images and pre process them as input data to the svm, with the labels, SVM is trained and validated.
 
