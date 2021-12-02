@@ -20,7 +20,7 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, Input
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint
 from keras.preprocessing.image import ImageDataGenerator
@@ -29,8 +29,6 @@ import tensorflow as tf
 # from tf.keras.applications.xception import Xception
 import pandas as pd
 from keras.layers import GlobalAveragePooling2D
-from keras.layers import Input
-from keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from keras.applications.xception import preprocess_input
 from keras.metrics import mean_absolute_error
