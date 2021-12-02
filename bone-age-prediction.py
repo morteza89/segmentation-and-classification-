@@ -218,3 +218,7 @@ def main():
     model.train_model()
     model.predict_results()
     model.predict_test_set()
+
+
+if __name__ == '__main__':
+    main()
