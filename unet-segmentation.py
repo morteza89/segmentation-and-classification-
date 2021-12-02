@@ -142,7 +142,7 @@ class unet():
 def main():
     model = unet(input_size=256)
     model.train(train_path='data/train', val_path='data/val', epochs=100, batch_size=8, save_path='weights/unet.h5')
-    model.save('weights/unet.h5')
+    # model.save('weights/unet.h5')
     model.load('weights/unet.h5')
     pred = model.predict(test_path='data/test', save_path='weights/unet.h5')
     print(pred)
