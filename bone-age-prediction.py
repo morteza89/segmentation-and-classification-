@@ -49,10 +49,10 @@ plot_predicted_vs_true_age = True
 
 class AgePrediction:
     def __init__(self):
-        self.train_data_dir = './data/train'
-        self.test_data_dir = './data/test'
-        self.train_labels_path = './data/train_labels.csv'
-        self.test_labels_path = './data/test_labels.csv'
+        self.train_data_dir = r'C:\Users\Morteza.Heidari\OneDrive - BioTelemetry, Inc\projects\bone-age\dataset\Bone-Age-Training-Set\boneage-training-dataset'
+        self.test_data_dir = r'C:\Users\Morteza.Heidari\OneDrive - BioTelemetry, Inc\projects\bone-age\dataset\Bone-Age-Validation-Set\Bone Age Validation Set\boneage-validation-dataset-1\boneage-validation-dataset-1'
+        self.train_labels_path = r'C:\Users\Morteza.Heidari\OneDrive - BioTelemetry, Inc\projects\bone-age\dataset\Bone-Age-Training-Set\train.csv'
+        self.test_labels_path = r'C:\Users\Morteza.Heidari\OneDrive - BioTelemetry, Inc\projects\bone-age\dataset\Bone-Age-Validation-Set\Bone Age Validation Set\Validation Dataset.csv'
         self.model_path = './models/model.h5'
         self.results_path = './results/results.csv'
         self.model = None
@@ -68,7 +68,7 @@ class AgePrediction:
         self.test_labels = pd.read_csv(self.test_labels_path)
         self.train_labels['id'] = self.train_labels['id'].apply(lambda x: str(x) + '.png')
         self.train_labels['gender'] = self.train_labels['male'].apply(lambda x: 'male' if x else 'female')
-        self.test_labels['Case ID'] = self.test_labels['Case ID'].apply(lambda x: str(x) + '.png')
+        self.test_labels['Image ID'] = self.test_labels['Image ID'].apply(lambda x: str(x) + '.png')
 
     def data_z_score(self):
         mean_bone_age = self.train_labels['boneage'].mean()
@@ -86,7 +86,7 @@ class AgePrediction:
         return df_train, df_valid
 
     def generate_data(self):
-        df_train, df_valid = self.data_split(self.train_labels)
+        df_train, df_valid = self.data_split()
         train_datagen = ImageDataGenerator(preprocessing_function=preprocess_input,
                                            rotation_range=30,
                                            width_shift_range=0.1,
@@ -148,7 +148,7 @@ class AgePrediction:
             self.model_2.summary()
 
     def train_model(self):
-        train_generator, valid_generator = self.generate_data(self.train_labels)
+        train_generator, valid_generator = self.generate_data()
         self.model_architecture()
         checkpoint = ModelCheckpoint(self.model_path, monitor='val_accuracy', verbose=1, save_best_only=True,
                                      mode='max')
