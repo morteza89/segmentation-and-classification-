@@ -1,7 +1,8 @@
 # ------------------------------------------------------------------------------
 # Name:        BONE AGE PREDICTION
 # Purpose:	   Predict AGE of the patient with a CNN network in the range of 0 to 18 years old.
-#
+# FIne and download the dataset from the following link: https://www.kaggle.com/kmader/rsna-bone-age
+# The bone age prediction is based on the bone age dataset from RSNA challenge.
 # Author:      Morteza Heidari
 #
 # Created:     12/2/2021
