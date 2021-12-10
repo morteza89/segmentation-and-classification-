@@ -229,5 +229,45 @@ class UNET():
         print('Loss: ', self.evaluated_results[0])
         print('Accuracy: ', self.evaluated_results[1])
 
-    def plot_validation_results(self):
+    def plot_image_results(self, num_images=5):
         # show performance of the model on some of the images in the dataset
+        data_load = Data_PreProcessing()
+        imagepath_df = data_load.prepare_data()
+        for i in range(0, num_images):
+            idx = np.random.randint(0, len(imagepath_df))
+            image_path = os.path.join(DataPath, imagepath_df['directory'].iloc[idx], imagepath_df['images'].iloc[idx])
+            mask_path = os.path.join(DataPath, imagepath_df['directory'].iloc[idx], imagepath_df['masks'].iloc[idx])
+            image = cv2.imread(image_path)
+            mask = cv2.imread(mask_path)
+            img = cv2.resize(image, (self.ImgWidth, self.ImgHieght))
+            msk = cv2.resize(mask, (self.ImgWidth, self.ImgHieght))
+
+            img = img.astype(np.float32)
+            img = img / 255.0
+            img = np.expand_dims(img, axis=0)
+            # 
+            self.model.load_weights(self.model_save_path)
+            predict = self.model.predict(img)
+            # plot the original input image the original mask and the output image, and the binary prediction
+            fig, ax = plt.subplots(1, 4, figsize=(20, 10))
+            ax[0].imshow(image)
+            ax[0].set_title('Original image')
+            ax[1].imshow(mask)
+            ax[1].set_title('Original mask')
+            ax[2].imshow(predict[0, :, :, 0])
+            ax[2].set_title('Predicted mask')
+            ax[3].imshow(predict[0, :, :, 0] > 0.5)
+            ax[3].set_title('Predicted mask binary')
+            plt.show()
+
+def main():
+    unet = UNET()
+    unet.train()
+    unet.validation()
+    unet.plot_image_results()
+
+if __name__ == '__main__':
+    main()
+
+
+
