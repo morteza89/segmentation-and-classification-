@@ -24,20 +24,20 @@ from tensorflow.keras import backend as K
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 ######
-DataPath = "/kaggle/input/lgg-mri-segmentation/kaggle_3m/"
+# DataPath = "/kaggle/input/lgg-mri-segmentation/kaggle_3m/"  # Path to the data
+DataPath = r'C:\Users\Morteza.Heidari\OneDrive - BioTelemetry, Inc\github-projects\segmentation-and-classification\segmentation-and-classification-\datasets\LGG Segmentation Dataset\kaggle_3m'
 EPOCHS = 35
 BATCH_SIZE = 32
 ImgHieght = 256
 ImgWidth = 256
 Channels = 3
-MODEL_SAVE_PATH = "./models/model_unet_3m.h5"
-####
-# Load the data
+MODEL_SAVE_PATH = "./models/model_unet_3m.h5"  # directory to save the  best model
+Augmentation = True  # True or False defines whether to use data augmentation or not
 ####
 
 
 class Data_PreProcessing():
-    def __init__(self, DataPath):
+    def __init__(self):
         self.DataPath = DataPath
 
     def prepare_data(self):
@@ -70,8 +70,12 @@ class Data_PreProcessing():
                                 height_shift_range=0.05,
                                 shear_range=0.05, fill_mode='nearest')
         # define the data generators:
-        imagedatagen = ImageDataGenerator(rescale=1 / 255., **data_augmenation)
-        maskdatagen = ImageDataGenerator(rescale=1 / 255., **data_augmenation)
+        if Augmentation:
+            imagedatagen = ImageDataGenerator(rescale=1 / 255., **data_augmenation)
+            maskdatagen = ImageDataGenerator(rescale=1 / 255., **data_augmenation)
+        else:
+            imagedatagen = ImageDataGenerator(rescale=1 / 255.)
+            maskdatagen = ImageDataGenerator(rescale=1 / 255.)
         # create the training image generator
         self.train_image_generator = imagedatagen.flow_from_dataframe(dataframe=train_df,
                                                                       x_col='image_path',
@@ -109,6 +113,7 @@ class Data_PreProcessing():
                                                                       target_size=(ImgHieght, ImgWidth),
                                                                       seed=42,
                                                                       color_mode='grayscale')
+        return self.train_image_generator.n, self.val_image_generator.n
     #
 
     def data_iterator(self, image_generator, mask_generator):
@@ -124,7 +129,7 @@ class Data_PreProcessing():
 
 
 class UNET():
-    def __init__(self, ImgHieght, ImgWidth, Channels, dropout_rate=0.1, batch_norm=True):
+    def __init__(self, dropout_rate=0.1, batch_norm=True):
         self.ImgHieght = ImgHieght
         self.ImgWidth = ImgWidth
         self.Channels = Channels
@@ -198,17 +203,18 @@ class UNET():
 
     def train(self):
         data_train = Data_PreProcessing()
-        data_train.training_validation_configuration()
+        num_train, num_valid = data_train.training_validation_configuration()
+        STEP_SIZE_TRAIN = num_train / BATCH_SIZE
+        STEP_SIZE_VALID = num_valid / BATCH_SIZE
         train_gen, val_gen = data_train.data_generator()
         Callbacks = [ModelCheckpoint(self.model_save_path, monitor='val_loss', save_best_only=True, save_weights_only=True),
                      EarlyStopping(monitor='val_loss', patience=15, verbose=1),
                      ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=3, verbose=1)]
         self.history = self.model.fit_generator(train_gen,
-                                                steps_per_epoch=len(train_gen),
-                                                batch_size=BATCH_SIZE,
+                                                steps_per_epoch=STEP_SIZE_TRAIN,
                                                 epochs=EPOCHS,
                                                 validation_data=val_gen,
-                                                validation_steps=len(val_gen),
+                                                validation_steps=STEP_SIZE_VALID,
                                                 callbacks=Callbacks)
 
     def plot_history():
@@ -245,7 +251,7 @@ class UNET():
             img = img.astype(np.float32)
             img = img / 255.0
             img = np.expand_dims(img, axis=0)
-            # 
+            #
             self.model.load_weights(self.model_save_path)
             predict = self.model.predict(img)
             # plot the original input image the original mask and the output image, and the binary prediction
@@ -260,14 +266,13 @@ class UNET():
             ax[3].set_title('Predicted mask binary')
             plt.show()
 
+
 def main():
     unet = UNET()
     unet.train()
     unet.validation()
     unet.plot_image_results()
 
+
 if __name__ == '__main__':
     main()
-
-
-
