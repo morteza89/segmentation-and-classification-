@@ -1,3 +1,12 @@
+
+# ------------------------------------------------------------------------------
+# Name:        Image Segmentation with U-Net
+# Purpose:	   MRI brain Tumor segmentation .
+#
+# Author:      Morteza Heidari
+#
+# Created:     12/11/2021
+# ------------------------------------------------------------------------------
 # In this code we will use brain MR together with the manual FLAIR abnormality segmentation masks to segment the tumor.
 # taking advantage of CNN with UNET as the segmentation model.
 import os
