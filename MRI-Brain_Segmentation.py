@@ -42,6 +42,7 @@ ImgWidth = 256
 Channels = 3
 MODEL_SAVE_PATH = "./models/model_unet_3m.h5"  # directory to save the  best model
 Augmentation = True  # True or False defines whether to use data augmentation or not
+BachNopm_Dropout = True #  it is better if we have batch normalization, we dont use dropout, and vise versa.
 ####
 
 
@@ -149,7 +150,7 @@ class UNET():
         self.model.summary()
         self.model_save_path = MODEL_SAVE_PATH
 
-    def conv2d_block(self, inputs, filters, kernel_size, batchnorm=True):
+    def conv2d_block(self, inputs, filters, kernel_size, batchnorm=False):
         """
         This function creates a convolutional block consisting of two convolutional layers
         and an optional batch normalization layer.
@@ -157,12 +158,12 @@ class UNET():
         # first layer
         x = Conv2D(filters, kernel_size=(kernel_size, kernel_size), kernel_initializer='he_normal', padding='same')(inputs)
         x = Activation('relu')(x)
-        if batchnorm:
+        if BachNopm_Dropout:
             x = BatchNormalization()(x)
         # second layer
         x = Conv2D(filters, kernel_size=(kernel_size, kernel_size), kernel_initializer='he_normal', padding='same')(x)
         x = Activation('relu')(x)
-        if batchnorm:
+        if BachNopm_Dropout:
             x = BatchNormalization()(x)
         return x
 
@@ -226,7 +227,7 @@ class UNET():
                                                 validation_steps=STEP_SIZE_VALID,
                                                 callbacks=Callbacks)
 
-    def plot_history():
+    def plot_history(self):
         plt.plot(self.history.history['loss'])
         plt.plot(self.history.history['val_loss'])
         plt.title('model loss')
@@ -237,10 +238,12 @@ class UNET():
 
     def validation(self):
         data_validation = Data_PreProcessing()
-        data_validation.training_validation_configuration()
+        num_train, num_valid = data_validation.training_validation_configuration()
+        STEP_SIZE_TRAIN = num_train / BATCH_SIZE
+        STEP_SIZE_VALID = num_valid / BATCH_SIZE
         train_gen, val_gen = data_validation.data_generator()
         self.model.load_weights(self.model_save_path)
-        self.evaluated_results = self.model.evaluate_generator(val_gen, steps=len(val_gen))
+        self.evaluated_results = self.model.evaluate_generator(val_gen, steps=STEP_SIZE_VALID)
         print('Loss: ', self.evaluated_results[0])
         print('Accuracy: ', self.evaluated_results[1])
 
