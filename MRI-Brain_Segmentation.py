@@ -253,8 +253,8 @@ class UNET():
         imagepath_df = data_load.prepare_data()
         for i in range(0, num_images):
             idx = np.random.randint(0, len(imagepath_df))
-            image_path = os.path.join(DataPath, imagepath_df['dir'].iloc[idx], imagepath_df['images'].iloc[idx])
-            mask_path = os.path.join(DataPath, imagepath_df['dir'].iloc[idx], imagepath_df['masks'].iloc[idx])
+            image_path = os.path.join(DataPath, imagepath_df['dir'].iloc[idx], imagepath_df['image'].iloc[idx])
+            mask_path = os.path.join(DataPath, imagepath_df['dir'].iloc[idx], imagepath_df['mask'].iloc[idx])
             image = cv2.imread(image_path)
             mask = cv2.imread(mask_path)
             img = cv2.resize(image, (self.ImgWidth, self.ImgHieght))
